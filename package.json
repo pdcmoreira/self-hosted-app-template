@@ -1,0 +1,38 @@
+{
+  "name": "self-hosted-app-template",
+  "version": "1.0.0",
+  "description": "Self-hosted application template",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n \"BE,FE\" -c \"blue,green\" \"pnpm run dev:backend\" \"pnpm run dev:frontend:wait\"",
+    "dev:backend": "pnpm --filter backend run dev",
+    "dev:frontend": "pnpm --filter frontend run dev",
+    "dev:frontend:wait": "wait-on http://localhost:3000/health -t 30000 -i 1000 -v && pnpm run dev:frontend",
+    "dev:debug": "concurrently -n \"BE,FE\" -c \"blue,green\" \"pnpm run dev:backend:debug\" \"pnpm run dev:frontend:wait\"",
+    "dev:backend:debug": "pnpm --filter backend run dev:debug",
+    "build": "pnpm run build:backend && pnpm run build:frontend",
+    "build:backend": "pnpm --filter backend run build",
+    "build:frontend": "pnpm --filter frontend run build:prod",
+    "start": "pnpm --filter backend run start",
+    "install:all": "pnpm install",
+    "clean": "pnpm -r run clean && rm -rf node_modules",
+    "format": "prettier --write --ignore-path .gitignore .",
+    "lint": "eslint --fix",
+    "docker:build": "docker build -t self-hosted-app-template .",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f self-hosted-app-template",
+    "docker:restart": "docker-compose restart self-hosted-app-template",
+    "change-version": "node scripts/change-version-references.js",
+    "setup": "node scripts/setup.js",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "eslint": "^9.29.0",
+    "prettier": "3.5.3",
+    "typescript-eslint": "^8.50.0",
+    "wait-on": "^8.0.3"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

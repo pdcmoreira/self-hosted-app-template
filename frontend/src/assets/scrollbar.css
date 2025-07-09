@@ -1,0 +1,33 @@
+@layer base {
+  :root {
+    --scroll-thumb: theme(colors.white / 0.1);
+    --scroll-thumb-hover: theme(colors.white / 0.2);
+    --scroll-track: transparent;
+  }
+
+  /* WebKit (Chrome / Edge / Safari) */
+  *::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scroll-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--scroll-thumb);
+    @apply rounded;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: var(--scroll-thumb-hover);
+  }
+
+  /* Firefox */
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+    }
+  }
+}

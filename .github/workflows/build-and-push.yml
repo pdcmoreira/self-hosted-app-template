@@ -1,0 +1,93 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main, master]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required for semantic-release to create tags and releases
+      packages: write # Required for pushing to GHCR
+      issues: write # Required for semantic-release to comment on issues
+      pull-requests: write # Required for semantic-release to comment on PRs
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install semantic-release dependencies
+        run: |
+          npm install -g semantic-release @semantic-release/changelog @semantic-release/git @semantic-release/github @semantic-release/exec conventional-changelog-conventionalcommits
+
+      - name: Determine next version (dry-run)
+        id: version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Run semantic-release in dry-run mode to get the next version
+          NEXT_VERSION=$(npx semantic-release --dry-run --no-ci | grep -oP "The next release version is \K[0-9]+\.[0-9]+\.[0-9]+" || echo "")
+
+          if [ -z "$NEXT_VERSION" ]; then
+            echo "No new version to release"
+            echo "version=" >> $GITHUB_OUTPUT
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          else
+            echo "Next version: $NEXT_VERSION"
+            echo "version=$NEXT_VERSION" >> $GITHUB_OUTPUT
+            echo "should_release=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run semantic-release
+        if: steps.version.outputs.should_release == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+      - name: Set up Docker Buildx
+        if: steps.version.outputs.should_release == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: steps.version.outputs.should_release == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        if: steps.version.outputs.should_release == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=v${{ steps.version.outputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=v${{ steps.version.outputs.version }}
+            type=semver,pattern={{major}},value=v${{ steps.version.outputs.version }}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        if: steps.version.outputs.should_release == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

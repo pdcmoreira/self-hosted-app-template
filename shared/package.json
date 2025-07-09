@@ -1,0 +1,11 @@
+{
+  "name": "@self-hosted-app-template/shared",
+  "version": "1.0.0",
+  "description": "Shared types and utilities for self-hosted-app-template",
+  "scripts": {
+    "clean": "rm -rf node_modules"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

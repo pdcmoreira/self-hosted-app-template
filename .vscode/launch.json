@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Backend Debug",
+      "type": "node",
+      "request": "attach",
+      "port": 9231,
+      "skipFiles": ["<node_modules>/**"],
+      "restart": true,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "${workspaceFolder}"
+    }
+  ]
+}
