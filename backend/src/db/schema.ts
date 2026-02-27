@@ -1,6 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { integer, sqliteTable, text, index } from 'drizzle-orm/sqlite-core';
 
+// Logs Table
 export const logs = sqliteTable(
   'logs',
   {
@@ -23,5 +24,14 @@ export const logs = sqliteTable(
 );
 
 export type Log = typeof logs.$inferSelect;
-
 export type NewLog = typeof logs.$inferInsert;
+
+// App Settings (generic key-value store)
+export const appSettings = sqliteTable('app_settings', {
+  key: text('key').primaryKey(),
+  value: text('value'), // JSON-encoded value
+  updatedAt: text('updated_at').default(sql`(datetime('now'))`),
+});
+
+export type AppSettingRecord = typeof appSettings.$inferSelect;
+export type NewAppSettingRecord = typeof appSettings.$inferInsert;

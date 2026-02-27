@@ -1,3 +1,9 @@
+CREATE TABLE `app_settings` (
+	`key` text PRIMARY KEY NOT NULL,
+	`value` text,
+	`updated_at` text DEFAULT (datetime('now'))
+);
+--> statement-breakpoint
 CREATE TABLE `logs` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created_at` text DEFAULT (datetime('now')) NOT NULL,

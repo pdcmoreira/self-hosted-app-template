@@ -1,9 +1,41 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1cd3bf64-6dda-4ad3-be54-72cb280bbc88",
+  "id": "6ab644cc-54b4-47c6-a761-320369b3e53d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
+    "app_settings": {
+      "name": "app_settings",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "(datetime('now'))"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
     "logs": {
       "name": "logs",
       "columns": {
@@ -54,23 +86,17 @@
       "indexes": {
         "idx_logs_created_at": {
           "name": "idx_logs_created_at",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "idx_logs_level": {
           "name": "idx_logs_level",
-          "columns": [
-            "level"
-          ],
+          "columns": ["level"],
           "isUnique": false
         },
         "idx_logs_source": {
           "name": "idx_logs_source",
-          "columns": [
-            "source"
-          ],
+          "columns": ["source"],
           "isUnique": false
         }
       },

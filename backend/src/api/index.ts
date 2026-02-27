@@ -20,7 +20,8 @@ export const setupApi = (app: Express): void => {
   app.use('/api', logsRoutes);
 
   // Global error handler - catches all unhandled exceptions
-  app.use((err: Error, req: Request, res: Response) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Express requires 4 params (err, req, res, next) to identify this as an error handler
+  app.use((err: Error, req: Request, res: Response, next: () => void) => {
     respondError(res, err.message || 'Internal server error');
   });
 };

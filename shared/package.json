@@ -2,6 +2,10 @@
   "name": "@self-hosted-app-template/shared",
   "version": "1.0.0",
   "description": "Shared types and utilities for self-hosted-app-template",
+  "type": "module",
+  "exports": {
+    "./types/*": "./types/*.ts"
+  },
   "scripts": {
     "clean": "rm -rf node_modules"
   },
