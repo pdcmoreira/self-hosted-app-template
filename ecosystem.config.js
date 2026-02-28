@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'self-hosted-app-template',
-      script: './backend/dist/server.js',
+      script: './backend/dist/backend/src/server.js',
       instances: 1,
       exec_mode: 'fork',
       autorestart: true,
